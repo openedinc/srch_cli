@@ -1,31 +1,50 @@
 # SRCH_CLI
 # Test IMS Global LTI Resource Search provider
-require "json"
-require "rest_client"
+require 'json'
+require 'rest_client'
+require 'optparse'
+
 
 def get_token(username)
   base=ENV["PARTNER_BASE_URI"]
   oauth_base=base
-  p "Fixed base #{oauth_base}"
+  p "Base URL: #{oauth_base}"
   url    = "#{base}/oauth/get_token"
   header = {content_type: "application/json"}
   data   = {"username"=>username,"client_id"=>ENV["CLIENT_ID"], "secret"=>ENV["CLIENT_SECRET"] }
+  p "Posting #{data}"
   result=RestClient.post url, data.to_json, header
 end
 
-url= ENV["PARTNER_BASE_URI"]+ "/resources"
-client_id="cc18d57bc1ab578fc6003b5feaff5875e86648a59b5341122e5761b45a3e2257"
-secret="15ace16509692805e280c3d8eda0351d6a323ab9cbd17d1b1239026fb9e622ce"
+options = {}
+criteria=""
+OptionParser.new do |opt|
+  opt.on('-s','--search SEARCH') { |o|
+    options[:search] = o
+    criteria= criteria + "search='"+options[:search]+"'"
+  }
+  opt.on('-t','--type TYPE') { |o|
+    options[:type] = o
+    criteria= criteria + "learningResourceType='"+options[:type]+"'"
+  }
+  opt.on('-u','--user USER') { |o| options[:user] = o }
+end.parse!
 
+p "Options: #{options}"
+
+url= ENV["PARTNER_BASE_URI"]+ "/resources"
+if criteria and criteria.size>0
+  url = url + "?filter=" + CGI.escape(criteria)
+end
 user = "bluma@act.org"
+user=options[:user] if options[:user]
 result = get_token(user)
 resp = JSON.parse(result)
 token = resp["access_token"]
-
 p "Token: #{token}"
 
 headers = { :content_type => 'application/json', :authorization => "Bearer #{token}"}
-p "Hitting #{url}"
+p "Hitting URL: #{url}"
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
 resources=result['resources']
