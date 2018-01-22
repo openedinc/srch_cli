@@ -12,7 +12,7 @@ def get_token(username)
   url    = "#{base}/oauth/get_token"
   header = {content_type: "application/json"}
   data   = {"username"=>username,"client_id"=>ENV["CLIENT_ID"], "secret"=>ENV["CLIENT_SECRET"] }
-  p "Posting #{data}"
+  p "Posting #{data} to #{url}"
   result=RestClient.post url, data.to_json, header
 end
 
@@ -21,7 +21,7 @@ criteria=""
 OptionParser.new do |opt|
   opt.on('-s','--search SEARCH') { |o|
     options[:search] = o
-    criteria= criteria + "search='"+options[:search]+"'"
+    criteria= criteria + "search~'"+options[:search]+"'"
   }
   opt.on('-t','--type TYPE') { |o|
     options[:type] = o
@@ -32,9 +32,10 @@ end.parse!
 
 p "Options: #{options}"
 
-url= ENV["PARTNER_BASE_URI"]+ "/resources"
+url = ENV["PARTNER_BASE_URI"]+ "/resources"
+url = url + "?fields=id,ltiLink,url,description,name"  # don't return all the fields
 if criteria and criteria.size>0
-  url = url + "?filter=" + CGI.escape(criteria)
+  url = url + "&filter=" + CGI.escape(criteria)
 end
 user = "bluma@act.org"
 user=options[:user] if options[:user]
