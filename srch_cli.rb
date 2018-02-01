@@ -4,7 +4,6 @@ require 'json'
 require 'rest_client'
 require 'optparse'
 
-
 def get_token(username)
   base=ENV["PARTNER_BASE_URI"]
   oauth_base=base
@@ -31,6 +30,10 @@ OptionParser.new do |opt|
 end.parse!
 
 p "Options: #{options}"
+if options.size == 0
+  p "Usage: ruby srch_cli.rb <options> "
+  exit 
+end
 
 url= ENV["PARTNER_BASE_URI"]+ "/resources"
 if criteria and criteria.size>0
