@@ -32,7 +32,7 @@ end.parse!
 p "Options: #{options}"
 if options.size == 0
   p "Usage: ruby srch_cli.rb <options> "
-  exit 
+  exit
 end
 
 url = ENV["PARTNER_BASE_URI"]+ "/resources"
@@ -52,4 +52,5 @@ p "Hitting URL: #{url}"
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
 resources=result['resources']
-p "# resources: #{resources.size}"
+p "Headers returned: #{response.headers.inspect.to_s}"
+p "# resources: #{response.headers[:x_total_count]}"
