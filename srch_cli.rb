@@ -24,9 +24,13 @@ OptionParser.new do |opt|
   }
   opt.on('-t','--type TYPE') { |o|
     options[:type] = o
-    criteria= criteria + "learningResourceType='"+options[:type]+"'"
+    criteria = criteria + " AND learningResourceType='"+options[:type]+"'"
   }
   opt.on('-u','--user USER') { |o| options[:user] = o }
+  opt.on('-p','--publisher PUBLISHER') { |o|
+    options[:publisher] = o
+    criteria = criteria + " AND publisher='"+options[:publisher]+ "'"
+  }
 end.parse!
 
 p "Options: #{options}"
