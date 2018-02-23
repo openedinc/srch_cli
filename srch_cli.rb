@@ -3,20 +3,22 @@
 require 'json'
 require 'rest_client'
 require 'optparse'
+require 'base64'
 
-def get_token(username,id,secret)
-  base=ENV["PARTNER_BASE_URI"]
-  oauth_base=base
-  p "Base URL: #{oauth_base}"
-  url    = "#{base}/oauth/get_token"
+def get_token(username,id,secret,tokenurl=nil)
   header = {content_type: "application/json"}
-  data   = {"username"=>username,"client_id"=>id, "secret"=>secret }
-  p "Posting #{data} to #{url}"
-  result=RestClient.post url, data.to_json, header
+  auth=Base64.encode64("#{id}:#{secret}")
+  data   = {"username"=>username,"client_id"=>id, "secret"=>secret,"AUTHORIZATION"=>auth }
+  p "Posting #{data} to #{tokenurl}"
+  result=RestClient.post tokenurl, data.to_json, header
 end
 
 id = ENV["CLIENT_ID"]
 secret = ENV["CLIENT_SECRET"]
+user = ENV["CLIENT_USER"]
+base=ENV["PARTNER_BASE_URI"]
+tokenurl="#{base}/oauth/get_token"
+
 options = {}
 criteria=""
 OptionParser.new do |opt|
@@ -30,6 +32,7 @@ OptionParser.new do |opt|
   }
   opt.on('-u','--user USER') { |o|
     options[:user] = o
+    user=options[:user]
   }
   opt.on('-p','--publisher PUBLISHER') { |o|
     options[:publisher] = o
@@ -44,6 +47,15 @@ OptionParser.new do |opt|
     options[:secret] = o
     secret = options[:secret]
   }
+  opt.on('-b','--base BASE') { |o|
+    options[:base] = o
+    base = options[:base]
+  }
+  opt.on('-t','--token TOKENURL') { |o|
+    options[:token] = o
+    base = options[:token]
+    tokenurl = options[:token]
+  }
 end.parse!
 
 p "Options: #{options}"
@@ -52,17 +64,13 @@ if options.size == 0
   exit
 end
 
-
-
-url = ENV["PARTNER_BASE_URI"]+ "/resources"
+url = base + "/ims/rs/v1p0/resources"
 url = url + "?fields=id,ltiLink,url,description,name"  # don't return all the fields
 if criteria and criteria.size>0
   url = url + "&filter=" + CGI.escape(criteria)
 end
-user = "bluma@act.org"
-user=options[:user] if options[:user]
 
-result = get_token(user,id,secret)
+result = get_token(user,id,secret,tokenurl)
 
 resp = JSON.parse(result)
 token = resp["access_token"]
