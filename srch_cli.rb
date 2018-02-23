@@ -7,8 +7,18 @@ require 'base64'
 
 def get_token(username,id,secret,tokenurl=nil)
   header = {content_type: "application/json"}
-  auth=Base64.encode64("#{id}:#{secret}")
-  data   = {"username"=>username,"client_id"=>id, "secret"=>secret,"AUTHORIZATION"=>auth }
+  auth="Basic " +Base64.encode64("#{id}:#{secret}")
+  p "My auth string #{auth}"
+  vk="Basic MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzVi\\nY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI="
+  # have tried Vikash's string from his email hardcoded. doesnt work with many variants
+  # note the severaldifferences between his string and what the code I used above generates
+  # neither string works however
+  p "VK auth string #{vk}"
+  # Knovation doesnt work even with client_id and secret below removed
+  # OpenEd needs that though.  I want ONE codebase that works for everything (this is the whole point of the standard)
+  data   = {"client_id"=>id, "secret"=>secret,"AUTHORIZATION"=>auth ,"grant_type"=>"client_credentials"}
+  data["username"]=username if username and username.size>0
+
   p "Posting #{data} to #{tokenurl}"
   result=RestClient.post tokenurl, data.to_json, header
 end
@@ -17,7 +27,7 @@ id = ENV["CLIENT_ID"]
 secret = ENV["CLIENT_SECRET"]
 user = ENV["CLIENT_USER"]
 base=ENV["PARTNER_BASE_URI"]
-tokenurl="#{base}/oauth/get_token"
+tokenurl = "#{base}/oauth/get_token"
 
 options = {}
 criteria=""
@@ -71,9 +81,9 @@ if criteria and criteria.size>0
 end
 
 result = get_token(user,id,secret,tokenurl)
-
 resp = JSON.parse(result)
 token = resp["access_token"]
+#token="9243e801-a10e-499e-ab01-ea5316b6b4f1"
 p "Token: #{token}"
 
 headers = { :content_type => 'application/json', :authorization => "Bearer #{token}"}
