@@ -14,21 +14,16 @@ def get_token(username,id,secret,tokenurl=nil)
   str = "#{id}:#{secret}"
   #str = 'MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzViY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI='
   auth="Basic " + base64_url_encode(str)
-  header = {'AUTHORIZATION': auth,"grant_type"=>"client_credentials"}
+  header = {"AUTHORIZATION"=> auth,"grant_type"=>"client_credentials"}
 
   p "My auth string #{auth}"
-  #vk="Basic MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzVi\\nY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI="
-  # have tried Vikash's string from his email hardcoded. doesnt work with many variants
-  # note the severaldifferences between his string and what the code I used above generates
-  # neither string works however
-  #p "VK auth string #{vk}"
-  # Knovation doesnt work even with client_id and secret below removed
-  # OpenEd needs that though.  I want ONE codebase that works for everything (this is the whole point of the standard)
+  vk="Basic MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzViY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI="
+  p "VK auth string #{vk}"
   #data   = {"client_id"=>id, "secret"=>secret,"AUTHORIZATION"=>auth ,"grant_type"=>"client_credentials"}
   #data["username"]=username if username and username.size>0
   #p "Posting #{data} to #{tokenurl}"
   puts "header is #{header}"
-  result=RestClient.post tokenurl, {}, header
+  result=RestClient.post tokenurl, data.to_json, header
 
 end
 
