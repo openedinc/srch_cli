@@ -9,22 +9,16 @@ def base64_url_encode(str)
   Base64.encode64(str).tr('+/', '-_').gsub(/\s/, '')#.gsub(/=+\z/, '')
 end
 
-
 def get_token(username,id,secret,tokenurl=nil)
   str = "#{id}:#{secret}"
-  #str = 'MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzViY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI='
   auth="Basic " + base64_url_encode(str)
-  header = {"AUTHORIZATION"=> auth,"grant_type"=>"client_credentials"}
-
-  p "My auth string #{auth}"
-  vk="Basic MTE5NDg5OTM3ODgxNjU3MTdVT180MzI2OmM2MTU4NmQyNDk4NTI2NjY3MzViY2FjZDA5YmQwNjE3ZTIyMzQxM2E3ZDBlNjg1NzYzOGU4ZTk2ZGIxMGZjYmI="
-  p "VK auth string #{vk}"
-  #data   = {"client_id"=>id, "secret"=>secret,"AUTHORIZATION"=>auth ,"grant_type"=>"client_credentials"}
-  #data["username"]=username if username and username.size>0
-  #p "Posting #{data} to #{tokenurl}"
-  puts "header is #{header}"
+  p "Auth string #{auth}"
+  header = {content_type: "application/json",AUTHORIZATION: auth}
+  data = {"client_id"=>id, "secret"=>secret}
+  data["username"]=username if username and username.size>0
+  puts "Header is #{header}"
+  p "Posting #{data} to #{tokenurl}"
   result=RestClient.post tokenurl, data.to_json, header
-
 end
 
 id = ENV["CLIENT_ID"]
@@ -32,6 +26,7 @@ secret = ENV["CLIENT_SECRET"]
 user = ENV["CLIENT_USER"]
 base=ENV["PARTNER_BASE_URI"]
 tokenurl = "#{base}/oauth/get_token"
+numresources = 10
 
 options = {}
 criteria=""
@@ -64,11 +59,15 @@ OptionParser.new do |opt|
   opt.on('-b','--base BASE') { |o|
     options[:base] = o
     base = options[:base]
+    tokenurl = "#{base}/oauth/get_token" if options[:token].nil?
   }
   opt.on('-t','--token TOKENURL') { |o|
     options[:token] = o
-    base = options[:token]
     tokenurl = options[:token]
+  }
+  opt.on('-n','--number NUMRESOURCES') { |o|
+    options[:number] = o
+    numresources = options[:numresources]
   }
 end.parse!
 
@@ -95,5 +94,10 @@ p "Hitting URL: #{url}"
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
 resources=result['resources']
-p "Headers returned: #{response.headers.inspect.to_s}"
-p "# resources: #{response.headers[:x_total_count]}"
+#p "Headers returned: #{response.headers.inspect.to_s}"
+p "# matching resources: #{response.headers[:x_total_count]}"
+#p "Name\tDescriptionL\tLTILink\tURL"
+for i in (0..numresources) do
+  r=resources[i]
+  p "#{r['name']}\t#{r['url']}\t#{r['description']}\n"
+end
