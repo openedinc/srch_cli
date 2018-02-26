@@ -96,7 +96,7 @@ result=JSON.parse(response)
 resources=result['resources']
 #p "Headers returned: #{response.headers.inspect.to_s}"
 p "# matching resources: #{response.headers[:x_total_count]}"
-#p "Name\tDescriptionL\tLTILink\tURL"
+p "Name\tDescriptionL\tLTILink\tURL"
 for i in (0..numresources) do
   r=resources[i]
   p "#{r['name']}\t#{r['url']}\t#{r['description']}\n"
