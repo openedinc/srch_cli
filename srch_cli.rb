@@ -86,7 +86,6 @@ end
 result = get_token(user,id,secret,tokenurl)
 resp = JSON.parse(result)
 token = resp["access_token"]
-#token="9243e801-a10e-499e-ab01-ea5316b6b4f1"
 p "Token: #{token}"
 
 headers = { :content_type => 'application/json', :authorization => "Bearer #{token}"}
@@ -94,7 +93,6 @@ p "Hitting URL: #{url}"
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
 resources=result['resources']
-#p "Headers returned: #{response.headers.inspect.to_s}"
 p "# matching resources: #{response.headers[:x_total_count]}"
 #p "Name\tDescriptionL\tLTILink\tURL"
 for i in (0..numresources) do
