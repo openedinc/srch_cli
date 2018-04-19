@@ -9,7 +9,6 @@ LTI Resource Search Providers.  Please write to adam.blum@act.org with pull requ
 Currently the LTI Resource Search spec is not yet published. While in this state please send me requests for access
 to the Open API specification.
 
- 
 Usage: ruby srch_cli.rb <options>
 
 * -i,--id CLIENT_ID - the client ID used to request a token
@@ -20,6 +19,8 @@ Usage: ruby srch_cli.rb <options>
 * -s,--search SEARCH - search name (title), subject and description for specified keyword(s)
 * -r,--search RESOURCETYPE - limit to specified resource types. See the IMS LTI Resource Search spec for valid types. 
 * -p,--publisher PUBLISHER - limit to specified publisher
+* -o,--objective NAME_OR_GUID_OR_CASEITEMURI - the human readable name or caseItemGUID or caseItemUri of the learning objective
+* -n,--number NUMRESOURCES - the number of resources to return
  
 Example: 
 
