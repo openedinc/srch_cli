@@ -23,11 +23,13 @@ Usage: ruby srch_cli.rb <options>
  
 Example: 
 
-  ruby srch_cli.rb -i cc18d57bc1ab578fc6003b5feaff5875e86648a59b5341122e5761b45a3e2257 
+```
+ruby srch_cli.rb -i cc18d57bc1ab578fc6003b5feaff5875e86648a59b5341122e5761b45a3e2257 
   -k 15ace16509692805e280c3d8eda0351d6a323ab9cbd17d1b1239026fb9e622ce  -b "https://resource-api-staging.herokuapp.com" 
-  -t "https://partner-staging.opened.com/2/oauth/get_token" -u bluma@act.org -o K.CC.1
+  -t "https://partner-staging.opened.com/2/oauth/get_token" -u bluma@act.org -o K.CC.1 
+```
  
-- adam.blum@act.org
+[Adam Blum](mailto:adam.blum@act.org)
 
 Learning Tools Interoperability® (LTI®) is a trademark of the IMS Global Learning Consortium, Inc. (www.imsglobal.org)
 
