@@ -9,7 +9,9 @@ LTI Resource Search Providers.  Please write to adam.blum@act.org with pull requ
 Currently the LTI Resource Search spec is not yet published. While in this state please send me requests for access
 to the Open API specification.
 
-Usage: ruby srch_cli.rb <options>
+Usage: ruby srch_cli.rb 
+
+Options:
 
 * -i,--id CLIENT_ID - the client ID used to request a token
 * -k,--secret CLIENT_SECRET - the client secret to request a token
