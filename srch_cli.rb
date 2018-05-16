@@ -80,11 +80,11 @@ OptionParser.new do |opt|
     end
     if not options[:objective]=~/\s/
       if options[:objective]=~/./ # indicates human readable name
-        criteria = criteria + "learningObjectives=[{\"learningObjectives.targetName\":\"1\"}]"
+        criteria = criteria + "learningObjectives.targetName='" + options[:objective] + "'"
       elsif options[:objective]=~/\//  # / indicates URI
-        criteria = criteria + "learningObjectives=[{'caseItemUri':'" + options[:objective]+ "'}]"
+        criteria = criteria + "learningObjectives.caseItemUri='" + options[:objective] + "'"
       else
-        criteria = criteria + "learningObjectives=[{'caseItemGUID':'" + options[:objective]+ "'}]"
+        criteria = criteria + "learningObjectives.caseItemGUID='" + options[:objective] + "'"
       end
     else
       p "Learning objectives can't have whitespace"
