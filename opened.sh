@@ -1,1 +1,1 @@
-ruby srch_cli.rb -i cc18d57bc1ab578fc6003b5feaff5875e86648a59b5341122e5761b45a3e2257 -k 15ace16509692805e280c3d8eda0351d6a323ab9cbd17d1b1239026fb9e622ce  -b "https://partner-staging.opened.com" -t "https://partner-staging.opened.com/2/oauth/get_token" -u bluma@act.org -o $1
+ruby srch_cli.rb -i 034099d709f91dae86180af55b63e22d7906077993ac268262798f206d801a1e -k 2283afb42b340adffa45465fb870b5f1fa1cc982e01f487af1326bd94624b363  -b "https://partner.opened.com" -t "https://partner.opened.com/2/oauth/get_token" -u bluma@act.org -o $1

@@ -13,7 +13,9 @@ def get_token(username,id,secret,tokenurl=nil)
   str = "#{id}:#{secret}"
   auth="Basic " + base64_url_encode(str)
   p "Auth string #{auth}"
+  # this is the way recommended by IMS: encodeand put in AUTHORIZATION header
   header = {content_type: "application/json",AUTHORIZATION: auth}
+  # this is also technically valid OAuth: put into body
   data = {"client_id"=>id, "secret"=>secret}
   data["username"]=username if username and username.size>0
   puts "Header is #{header}"
@@ -71,6 +73,8 @@ OptionParser.new do |opt|
   }
   opt.on('-p','--publisher PUBLISHER') { |o|
     options[:publisher] = o
+    criteria = criteria + "publisher='"+options[:type]+"'"
+
   }
   opt.on('-o','--objective NAME_OR_GUID_OR_CASEITEMURI') { |o|
     options[:objective] = o
@@ -79,7 +83,7 @@ OptionParser.new do |opt|
       criteria = criteria + " AND "
     end
     if not options[:objective]=~/\s/
-      if options[:objective]=~/./ # indicates human readable name
+      if options[:objective]=~/\./ # indicates human readable name
         criteria = criteria + "learningObjectives.targetName='" + options[:objective] + "'"
       elsif options[:objective]=~/\//  # / indicates URI
         criteria = criteria + "learningObjectives.caseItemUri='" + options[:objective] + "'"
