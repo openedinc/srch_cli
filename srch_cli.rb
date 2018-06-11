@@ -94,6 +94,13 @@ OptionParser.new do |opt|
       p "Learning objectives can't have whitespace"
     end
   }
+  opt.on('-x','--expand_objectives CASEPROVIDERURL') { |o|
+    if criteria.size > 0
+      criteria = criteria + " AND "
+    end
+    options[:expand]=o
+    criteria = criteria + "extensions.expandObjectives':'"+ options[:expand] +"'"
+  }
 
   # limit or sort results
   opt.on('-n','--number NUMRESOURCES') { |o|
