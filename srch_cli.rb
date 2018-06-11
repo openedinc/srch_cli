@@ -132,10 +132,10 @@ p "Hitting URL: #{url}"
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
 resources=result['resources']
-numresources=response.headers[:x_total_count]
+numresources=response.headers[:x_total_count].to_i
 p "# matching resources: #{numresources}"
-p "Name\tDescriptionL\tLTILink\tURL"
-for i in (0...numresources) do
+p "Name,Description,LTILink,URL"
+for i in 0...numresources do
   r=resources[i]
-  p "#{r['name']}\t#{r['url']}\t#{r['description']}\n"
+  p "#{r['name']}\t#{r['url']}\t#{r['description']}\n" if r
 end
