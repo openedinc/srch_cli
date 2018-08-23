@@ -4,28 +4,45 @@ require 'json'
 require 'rest_client'
 require 'optparse'
 require 'base64'
+require 'uri'
 
 def base64_url_encode(str)
   Base64.encode64(str).tr('+/', '-_').gsub(/\s/, '')#.gsub(/=+\z/, '')
 end
 
-def get_token(username,id,secret,tokenurl=nil)
-  str = "#{id}:#{secret}"
-  auth="Basic " + base64_url_encode(str)
-  p "Auth string #{auth}"
-  # this is the way recommended by IMS: encodeand put in AUTHORIZATION header
-  header = {content_type: "application/json",AUTHORIZATION: auth}
-  # this is also technically valid OAuth: put into body
-  data = {"client_id"=>id, "secret"=>secret}
-  data["username"]=username if username and username.size>0
+def get_token(username,id,secret,tokenurl=nil,authorization=nil,form_encoded=nil)
+  if authorization.nil?
+    str = "#{id}:#{secret}"
+    auth="Basic " + base64_url_encode(str)
+    p "Auth string #{auth}"
+  else
+    auth="Basic " + authorization
+  end
+  if form_encoded
+    # handle the way IMS conformance server expects form encoded data
+    header = {"Content-Type"=> "application/x-www-form-urlencoded","Authorization"=>auth}
+    # this is also technically valid OAuth: put into body
+    data = {grant_type: "client_credentials",scope: "http://www.imsglobal.org/ltirs"}
+    # they dont seem to want user name?
+    # data["username"]=username if username and username.size>0
+    encoded=URI.encode_www_form(data)
+  else
+    header = {content_type: "application/json",AUTHORIZATION: auth}
+    # this is also technically valid OAuth: put into body
+    data = {}
+    data["username"]= username if username and username.size>0
+    encoded=data.to_json
+  end
   puts "Header is #{header}"
-  p "Posting #{data} to #{tokenurl}"
-  result=RestClient.post tokenurl, data.to_json, header
+  p "Posting encoded #{encoded} to #{tokenurl}"
+  result=RestClient.post tokenurl, encoded, header
 end
 
 id = ENV["CLIENT_ID"]
 secret = ENV["CLIENT_SECRET"]
-user = ENV["CLIENT_USER"]
+auth = nil
+user = nil
+form_encoded = nil
 base=ENV["PARTNER_BASE_URI"]
 tokenurl = "#{base}/oauth/get_token"
 numresources = 10
@@ -42,6 +59,10 @@ OptionParser.new do |opt|
     options[:secret] = o
     secret = options[:secret]
   }
+  opt.on('-a','--auth AUTHORIZATION') { |o|
+    options[:auth] = o
+    auth = options[:auth]
+  }
   opt.on('-u','--user USER') { |o|
     options[:user] = o
     user=options[:user]
@@ -54,8 +75,13 @@ OptionParser.new do |opt|
   opt.on('-t','--token TOKENURL') { |o|
     options[:token] = o
     tokenurl = options[:token]
+    p "Token URL #{tokenurl}"
   }
-
+  opt.on('-f','--form 1') { |o|
+    options[:form] = o
+    form_encoded = options[:form]
+    p "Form encoded #{form_encoded}"
+  }
   # add various search criteria to filter
   opt.on('-s','--search SEARCH') { |o|
     options[:search] = o
@@ -83,10 +109,10 @@ OptionParser.new do |opt|
       criteria = criteria + " AND "
     end
     if not options[:objective]=~/\s/
-      if options[:objective]=~/\./ # indicates human readable name
-        criteria = criteria + "learningObjectives.targetName='" + options[:objective] + "'"
-      elsif options[:objective]=~/\//  # / indicates URI
+      if options[:objective]=~/\//  # / indicates URI
         criteria = criteria + "learningObjectives.caseItemUri='" + options[:objective] + "'"
+      elsif options[:objective]=~/\./ # indicates human readable name
+        criteria = criteria + "learningObjectives.targetName='" + options[:objective] + "'"
       else
         criteria = criteria + "learningObjectives.caseItemGUID='" + options[:objective] + "'"
       end
@@ -122,7 +148,7 @@ if criteria and criteria.size>0
   url = url + "&filter=" + CGI.escape(criteria)
 end
 
-result = get_token(user,id,secret,tokenurl)
+result = get_token(user,id,secret,tokenurl,auth,form_encoded)
 resp = JSON.parse(result)
 token = resp["access_token"]
 p "Token: #{token}"
