@@ -77,7 +77,7 @@ OptionParser.new do |opt|
     tokenurl = options[:token]
     p "Token URL #{tokenurl}"
   }
-  opt.on('-f','--form 1') { |o|
+  opt.on('-f','--form') { |o|
     options[:form] = o
     form_encoded = options[:form]
     p "Form encoded #{form_encoded}"
@@ -127,6 +127,12 @@ OptionParser.new do |opt|
     options[:expand]=o
     criteria = criteria + "extensions.expandObjectives':'"+ options[:expand] +"'"
   }
+  opt.on('-z','--sort FIELD') { |o|
+    options[:sort]=o
+  }
+  opt.on('-l','--subjects') { |o|
+    options[:subjects]=o
+  }
 
   # limit or sort results
   opt.on('-n','--number NUMRESOURCES') { |o|
@@ -142,26 +148,41 @@ if options.size == 0
   exit
 end
 
-url = base + "/ims/rs/v1p0/resources"
-url = url + "?fields=id,ltiLink,url,description,name"  # don't return all the fields
-if criteria and criteria.size>0
-  url = url + "&filter=" + CGI.escape(criteria)
-end
-
 result = get_token(user,id,secret,tokenurl,auth,form_encoded)
 resp = JSON.parse(result)
 token = resp["access_token"]
 p "Token: #{token}"
 
 headers = { :content_type => 'application/json', :authorization => "Bearer #{token}"}
+
+if options[:subjects]
+  url = base + "/ims/rs/v1p0/subjects"
+else # search
+  url = base + "/ims/rs/v1p0/resources"
+  url = url + "?fields=id,ltiLink,url,description,name"  # don't return all the fields
+  url = url + "&sort="+ options[:sort] + "&orderBy=asc"
+  if criteria and criteria.size>0
+    url = url + "&filter=" + CGI.escape(criteria)
+  end
+end
 p "Hitting URL: #{url}"
+
 response=RestClient.get(url.to_s,headers)
 result=JSON.parse(response)
-resources=result['resources']
-numresources=response.headers[:x_total_count].to_i
-p "# matching resources: #{numresources}"
-p "Name,Description,LTILink,URL"
-for i in 0...numresources do
-  r=resources[i]
-  p "#{r['name']}\t#{r['url']}\t#{r['description']}\n" if r
+if options[:subjects]
+  p "# matching subjects: #{numresources}"
+  for i in 0...numresources do
+    subjects=result['subjects']
+    s=subjects[i]
+    p "#{s}" if s
+  end
+else
+  resources=result['resources']
+  numresources=response.headers[:x_total_count].to_i
+  p "# matching resources: #{numresources}"
+  p "Name,Description,LTILink,URL"
+  for i in 0...numresources do
+    r=resources[i]
+    p "#{r['name']}\t#{r['url']}\t#{r['description']}\n" if r
+  end
 end
