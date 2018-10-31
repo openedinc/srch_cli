@@ -160,7 +160,7 @@ if options[:subjects]
 else # search
   url = base + "/ims/rs/v1p0/resources"
   url = url + "?fields=id,ltiLink,url,description,name"  # don't return all the fields
-  url = url + "&sort="+ options[:sort] + "&orderBy=asc"
+  url = url + "&sort="+ options[:sort] + "&orderBy=asc" if options[:sort]
   if criteria and criteria.size>0
     url = url + "&filter=" + CGI.escape(criteria)
   end
