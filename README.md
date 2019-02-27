@@ -15,9 +15,11 @@ Options:
 
 * -i,--id CLIENT_ID - the client ID used to request a token
 * -k,--secret CLIENT_SECRET - the client secret to request a token
+* -a - full authorization token (not necessary if ID:secret are used separately)
 * -u,--user USER - the user ID (generally email address) of the person requesting
 * -b,--base BASE - the base URL to connect to for the /resources endpoint
 * -t,--token TOKEN - the token URL to request a token from.  By default its BASE/oauth/get_token
+* -f - form encoded payload for OAuth (required by IMS conformance systems)
 * -s,--search SEARCH - search name (title), subject and description for specified keyword(s)
 * -r,--search RESOURCETYPE - limit to specified resource types. See the IMS LTI Resource Search spec for valid types. 
 * -p,--publisher PUBLISHER - limit to specified publisher

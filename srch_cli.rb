@@ -1,5 +1,23 @@
-# SRCH_CLI
-# Test IMS Global LTI Resource Search provider
+=begin
+  
+SRCH_CLI
+
+Test IMS Global LTI Resource Search provider
+Provides several command line options:
+* -i - client ID
+* -k - client secret
+* -a - full authorization token (not necessary if ID:secret are used separately)
+* -u - user (as email). Required by some providers (like OpenEd)
+* -b - base URL for LTI Resource Search services,  e.g. "https://partner.opened.com"
+* -t - token server, i.e. URL for OAuth 2.0 authentication, e.g. "https://partner.opened.com/2/oauth/get_token"
+* -f - form encoded payload for OAuth (required by IMS conformance systems)
+* -s - use "search" attribute to search for word or phrase among multiple fields in provider
+* -s,--search SEARCH - search name (title), subject and description for specified keyword(s)
+* -r,--search RESOURCETYPE - limit to specified resource types. See the IMS LTI Resource Search spec for valid types.
+* -p,--publisher PUBLISHER - limit to specified publisher
+* -o,--objective NAME_OR_GUID_OR_CASEITEMURI - the human readable name or caseItemGUID or caseItemUri of the learning objective
+* -n,--number NUMRESOURCES - the number of resources to return
+=end
 require 'json'
 require 'rest_client'
 require 'optparse'
