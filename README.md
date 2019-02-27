@@ -6,8 +6,7 @@ Test various capabilities exposed by IMS Global’s LTI ® Resource Search.  Whi
 the primary purpose of SRCH_CLI is to show the LTI Resource Search API can be used against multiple compliant 
 LTI Resource Search Providers.  Please write to adam.blum@act.org with pull requests, questions and suggestions.  
 
-Currently the LTI Resource Search spec is not yet published. While in this state please send me requests for access
-to the Open API specification.
+The spec for LTI Resource Search is available [here](http://imsglobal.org/resource-search)
 
 Usage: ruby srch_cli.rb 
 
