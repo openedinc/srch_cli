@@ -15,7 +15,7 @@
                 "-b", "https://partner.opened.com",
                 "-t","https://partner.opened.com/2/oauth/get_token",
                 "-u","bluma@act.org",
-                "-o","$1"]
+                "-o","6b9c2393-d7cc-11e8-824f-0242ac160002"]
         },
         {
             "name": "Knovation",
